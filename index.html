@@ -236,10 +236,37 @@
           <section>
             <p>Going to back to our example</p>
             <div class="demo-input-wrapper">
-              <input value="A value">
+              <input value="John Fandomovich" />
               <button>Save</button>
               <button>Clear</button>
               <button>Lock</button>
+            </div>
+            <div class="demo-input-wrapper">
+              <input disabled value="Blocked value" />
+              <button>Save</button>
+              <button disabled>Clear</button>
+              <button>Unlock</button>
+            </div>
+            <div class="demo-input-wrapper">
+              <input value="John Fandomovich" disabled />
+              <button disabled>Loading ...</button>
+              <button disabled>Clear</button>
+              <button disabled>Lock</button>
+            </div>
+            <div class="demo-input-wrapper">
+              <input />
+              <button>Save</button>
+              <button disabled>Clear</button>
+              <button disabled>Lock</button>
+            </div>
+            <div class="demo-input-wrapper">
+              <input
+                class="with-error"
+                value="Sh"
+              />
+              <button disabled>Save</button>
+              <button>Clear</button>
+              <button disabled>Lock</button>
             </div>
           </section>
           <section>

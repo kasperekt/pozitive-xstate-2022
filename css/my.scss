@@ -1,0 +1,92 @@
+:root {
+  --fandom-brand-yellow: #ffc500;
+  --fandom-brand-red: #fa005a;
+  --fandom-brand-purple: #520044;
+  --fandom-brand-cream: #f9edd8;
+  --fandom-brand-crimson: #9b004e;
+  --fandom-brand-light-blue: #86d7dc;
+  --fandom-brand-light-gray: #838d86;
+  --fandom-brand-purple-black: #280033;
+  --fandom-ui-white: #ffffff;
+  --fandom-ui-light-gray: #f5f3f5;
+  --fandom-ui-mid-light-gray: #d6d0d5;
+  --fandom-ui-middle-gray: #595358;
+  --fandom-ui-dark-gray: #291927;
+  --fandom-ui-black: #1e0c1b;
+  --fandom-ui-text-light: #e6e6e6;
+  --fandom-ui-text-dark: #3a3a3a;
+  --fandom-ui-overlay: #000000;
+  --fandom-ui-alert: #bf0017;
+  --fandom-ui-message: #753369;
+  --fandom-ui-success: #0c742f;
+  --fandom-ui-warning: #cf721c;
+  --r-main-font: Rubik, Open Sans, sans-serif;
+  --r-code-font: "SF Mono", monospace;
+}
+
+.subheading {
+  font-size: 1.5rem;
+  font-style: italic;
+}
+
+.reveal .large-code pre code {
+  max-height: 600px;
+}
+
+.demo-input-wrapper {
+  * {
+    box-sizing: border-box;
+  }
+
+  input {
+    all: unset;
+    font-family: var(--r-main-font);
+    color: var(--fandom-ui-text-dark);
+    background-color: var(--fandom-ui-white);
+    font-size: 1rem;
+    text-align: start;
+    padding: 0.25rem 0.5rem;
+    line-height: 1.5;
+    border-radius: 3px;
+
+    &:focus {
+      outline: 2px solid var(--fandom-brand-purple);
+    }
+
+    &:disabled {
+      background-color: var(--fandom-ui-middle-gray);
+      color: var(--fandom-ui-text-light);
+    }
+
+    &.with-error {
+      border: 2px solid var(--fandom-ui-alert);
+      color: var(--fandom-ui-alert);
+    }
+  }
+
+  button {
+    all: unset;
+    font-size: 1rem;
+    padding: 0.25rem 0.5rem;
+    line-height: 1.5;
+    background-color: var(--fandom-brand-crimson);
+    border-radius: 3px;
+    color: var(--fandom-ui-text-light);
+    cursor: pointer;
+
+    &:hover {
+      background-color: var(--fandom-brand-cream);
+      color: var(--fandom-ui-text-dark);
+    }
+
+    &:focus {
+      outline: 2px solid var(--fandom-brand-purple);
+    }
+
+    &:disabled {
+      background-color: var(--fandom-ui-dark-gray);
+      color: var(--fandom-ui-text-light);
+      cursor: not-allowed;
+    }
+  }
+}

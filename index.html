@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <link rel="icon" type="image/png" href="/images/favicon.png" />
+
+    <title>Complex UI state management</title>
+
+    <link href="https://fonts.cdnfonts.com/css/sf-mono" rel="stylesheet" />
+    <link rel="stylesheet" href="dist/reset.css" />
+    <link rel="stylesheet" href="dist/reveal.css" />
+    <link rel="stylesheet" href="dist/theme/fandom.css" />
+    <link rel="stylesheet" href="dist/my.css" />
+
+    <!-- Theme used for syntax highlighted code -->
+    <link rel="stylesheet" href="plugin/highlight/monokai.css" />
+  </head>
+  <body>
+    <div class="reveal">
+      <div class="slides">
+        <section>
+          <img src="/images/fandom-logo.png" width="100" />
+          <h2>Complex UI state management</h2>
+          <p>How to handle UI that's not that simple</p>
+        </section>
+
+        <!-- About me -->
+        <section>
+          <div>A little about me:</div>
+          <div>I'm <strong>Tomek Kasperek</strong></div>
+          <div>
+            Engineering Manager @ <a href="https://fandom.com">Fandom</a>
+          </div>
+          <div>Working on creator tools</div>
+          <div><strong>Frontend Engineering</strong> background</div>
+        </section>
+
+        <!-- Goal, plan and caveats -->
+        <section>
+          <section>
+            <h3>My goal</h3>
+            <p class="fragment"><span class="fragment semi-fade-out strike">Talk about fantastic new framework!</span></p>
+            <p class="fragment"><span class="fragment semi-fade-out strike">Talk about the newest, freshest idea and tooling in the JavaScript land</span></p>
+            <h4 class="fragment">Introduce you to an idea of state machines 👍</h4>
+          </section>
+          <section>
+            <h3>Plan for today</h3>
+            <ol>
+              <li>Current approach to state management</li>
+              <li>Single store</li>
+              <li>State machines for the rescue</li>
+              <li><em>XState</em> library</li>
+            </ol>
+          </section>
+
+          <section>
+            <h3>Before we start, caveats:</h3>
+            <ul>
+              <!-- Simplicity of React will help us -->
+              <li>React point-of-view</li>
+              <li>Assuming some frontend knowledge</li>
+            </ul>
+  
+            <aside class="notes">
+              <ul>
+                <li>
+                  React is easy to read as it resembled HTML. Many people are
+                  already using it
+                </li>
+                <li>I won't use complex examples.</li>
+              </ul>
+            </aside>
+          </section>
+        </section>
+
+        <!-- Introduce an idea of state management in frontend applications -->
+        <section>
+          <section>
+            Modern frontend applicatons use different libraries to handle UI
+            state management.
+          </section>
+          <section>
+            <p><em>A seemingly simple UI</em></p>
+            <img width="800px" src="./images/input-example-1.png">
+          </section>
+          <section>
+            <em>Might not be easy to implement</em>
+            <div class="demo-input-wrapper">
+              <input value="John Fandomovich" />
+              <button>Save</button>
+              <button>Clear</button>
+              <button>Lock</button>
+            </div>
+            <div class="demo-input-wrapper">
+              <input disabled value="Blocked value" />
+              <button>Save</button>
+              <button disabled>Clear</button>
+              <button>Unlock</button>
+            </div>
+            <div class="demo-input-wrapper">
+              <input value="John Fandomovich" disabled />
+              <button disabled>Loading ...</button>
+              <button disabled>Clear</button>
+              <button disabled>Lock</button>
+            </div>
+            <div class="demo-input-wrapper">
+              <input />
+              <button>Save</button>
+              <button disabled>Clear</button>
+              <button disabled>Lock</button>
+            </div>
+            <div class="demo-input-wrapper">
+              <input
+                class="with-error"
+                value="Sh"
+              />
+              <button disabled>Save</button>
+              <button>Clear</button>
+              <button disabled>Lock</button>
+            </div>
+          </section>
+        </section>
+
+        <!-- Current state of things in frontend. -->
+        <section>
+          <section>In many cases, we use unidirectional flow model</section>
+          <section>
+            <img src="./images/unidirectional-flow.png" height="500" />
+          </section>
+          <section data-markdown>
+            _Universal model_ is `$$ state + action \rightarrow state $$`
+          </section>
+          <section>
+            <div>In React world:</div>
+            <div>Redux 👑</div>
+            <div class="fragment">
+              Alternatives:
+              <a href="https://github.com/pmndrs/zustand">Zustand</a>,
+              <a href="https://recoiljs.org/">Recoil</a>,
+              <a href="https://jotai.org/">Jotai</a>
+            </div>
+            <div class="fragment"><em>Custom solutions</em></div>
+          </section>
+
+          <section
+            class="large-code"
+            data-markdown="markdown/redux-example-1.md"
+          ></section>
+          <section
+            class="large-code"
+            data-markdown="markdown/redux-example-2.md"
+          ></section>
+          <section
+            class="large-code"
+            data-markdown="markdown/redux-example-3.md"
+          ></section>
+        </section>
+
+        <!-- Problems with Redux and single store approach -->
+        <section>
+          <section>
+            <p>Redux promotes single data source</p>
+            <p>It's easy to understand</p>
+            <p class="fragment">It's not ideal, because it becomes hard to maintain</p>
+            <p class="fragment">
+              Mental model is <em>too simple</em> for the problem
+            </p>
+          </section>
+          <section>
+            <p>Disabling "clear" function when input is locked.</p>
+            <div class="demo-input-wrapper">
+              <input value="Locked value" disabled>
+              <button>Save</button>
+              <button>Clear</button>
+              <button>Unlock</button>
+            </div>
+            <p class="fragment">How to prevent that?</p>
+          </section>
+          <section class="large-code" data-markdown="markdown/clearing-input-1.md"></section>
+          <section class="large-code" data-markdown="markdown/clearing-input-2.md"></section>
+          <section>
+            <p>Putting <code>if</code> conditions for every action</p>
+            <p></p>
+            <p>It becomes an issue*</p>
+            <small class="fragment">* especially in large projects</small>
+          </section>
+          <section>
+            <h1>🥺</h1>
+            <h1>HELP</h1>
+          </section>
+        </section>
+
+        <!-- A part about state machines -->
+        <section>
+          <section>How to write more maintainable code? 🤔</section>
+          <section>
+            <img src="./images/unidirectional-flow.png" />
+          </section>
+          <section>
+            <img src="./images/state.png" />
+          </section>
+          <section>
+            <img src="./images/state-machine-model.png" width="800" />
+          </section>
+          <section>
+            <p>What's that?</p>
+            <p class="fragment">✨ State machines ✨</p>
+            <p>... and why is it better?</p>
+            <p class="fragment">It gives us more tools to define state</p>
+          </section>
+          <section>
+            <p>Are there any tools?</p>
+            <p class="fragment">We can still use Redux.</p>
+            <p class="fragment">
+              This is what
+              <a
+                href="https://redux.js.org/style-guide/#treat-reducers-as-state-machines"
+                >documentation says</a
+              >:
+              <div class="fragment" data-markdown>
+                > Treat Reducers as State Machines (strongly recommended)
+              </div>
+            </p>
+          </section>
+          <section>
+            <p>There's another option</p>
+            <p class="fragment"><a href="https://xstate.js.org" target="_blank"><img width="700px" src="./images/xstate-logo-white.svg"></a></p>
+          </section>
+        </section>
+
+        <!-- How we can use an XState library -->
+        <section>
+          <section>
+            <p>Going to back to our example</p>
+            <div class="demo-input-wrapper">
+              <input value="A value">
+              <button>Save</button>
+              <button>Clear</button>
+              <button>Lock</button>
+            </div>
+          </section>
+          <section>
+            <p>Input machine</p>
+            <iframe width="100%" height="600px" data-src="https://stately.ai/viz/embed/de060930-f181-4787-92cc-bbc7c177112a?mode=viz&panel=code&readOnly=1&showOriginalLink=1&controls=0&pan=0&zoom=0" sandbox="allow-same-origin allow-scripts"></iframe>
+          </section>
+          <section class="large-code" data-markdown="markdown/xstate-example-1.md"></section>
+        </section>
+
+        <!-- XState introduction -->
+        <section>
+          <section>
+            <p>First, let's introduce some new phrases:</p>
+            <ul style="max-width: 900px;">
+              <li class="fragment"><a href="https://xstate.js.org/docs/about/concepts.html#finite-state-machines" target="_blank">State machines</a> — mathematical model of computation</li>
+              <li class="fragment"><a href="https://xstate.js.org/docs/about/concepts.html#statecharts" target="_blank">Statecharts</a> — basically state machines extension. Introduced i.e context or nested states</li>
+              <li class="fragment"><a href="https://xstate.js.org/docs/guides/context.html" target="_blank">Context</a> — extended state</li>
+              <li class="fragment"><a href="https://xstate.js.org/docs/guides/events.html" target="_blank">Events</a> — (sort of) equivalent to Redux actions</li>
+              <li class="fragment"><a href="https://xstate.js.org/docs/guides/actions.html" target="_blank">Actions</a> — <em>fire-and-forget</em> effect</li>
+              <li class="fragment"><a href="https://xstate.js.org/docs/about/concepts.html#actor-model" target="_blank">Actor model</a> — another mathematical model of computation</li>
+            </ul>
+          </section>
+          <section>
+            <p>XState is also an ecosystem</p>
+            <p><a href="https://stately.ai/viz">Visualizer</a></p>
+            <p><a href="https://stately.ai/registry/new">Editor</a></p>
+          </section>
+          <section>
+            <h4>Strong parts</h4>
+            <ul>
+              <li class="fragment">Mature library with community and tooling 🔨</li>
+              <li class="fragment">XState understands and uses concepts that are well researched 🦾</li>
+              <li class="fragment">Works with different frameworks</li>
+              <li class="fragment">It's not just a global state solution replacement, it can be as "local" as you need</li>
+              <li class="fragment">Testable</li>
+            </ol>
+          </section>
+          <section>
+            <!-- It might be subjective, but I think this is major pro -->
+            <!-- But it takes time before you can switch -->
+            <h3>🤯</h3>
+            <p>It changes how you think about problems</p>
+          </section>
+          <section>
+            <p><em>In Redux:</em></p>
+            <p>It's simple to start coding right away</p>
+            <p>You're encouraged to do so</p>
+            <hr class="fragment" data-fragment-index="1" />
+            <p class="fragment" data-fragment-index="1">In XState:</p>
+            <p class="fragment" data-fragment-index="1">More difficult to code right away</p>
+            <p class="fragment" data-fragment-index="1">Forces you to model the state first</p>
+          </section>
+        </section>
+
+        <!-- Specifcs -->
+        <section>
+          <section>
+            <h2>🧐</h2>
+            <h3>Most important* features of XState</h3>
+            <p>* in my opinion</p>
+          </section>
+          <section class="large-code" data-markdown="markdown/nested-state.md"></section>
+          <section class="large-code" data-markdown="markdown/parallel-state.md"></section>
+          <section>
+            <h4>Parallel state</h4>
+            <iframe width="100%" height="600px" data-src="https://stately.ai/viz/embed/4469b55c-e777-4708-b926-a79d034b9cf6?mode=viz&panel=code&showOriginalLink=1&readOnly=1&pan=0&zoom=0&controls=0" sandbox="allow-same-origin allow-scripts"></iframe>
+          </section>
+          <section class="large-code" data-markdown="markdown/spawning-actors.md"></section>
+        </section>
+
+        <section>
+          <section>
+            <h2>🤔</h2>
+            <p>How to start using it in real applications?</p>
+          </section>
+          <section class="large-code" data-markdown="markdown/using-xstate-1.md"></section>
+          <section class="large-code" data-markdown="markdown/using-xstate-2.md"></section>
+          <section class="large-code" data-markdown="markdown/using-xstate-3.md"></section>
+        </section>
+
+        <section>
+          <section>
+            <h3>Fandom's take on XState</h3>
+            <p><a href="https://community.fandom.com/wiki/Help:Interactive_Maps" target="_blank">Interactive Maps</a> project</p>
+            <p>Worked in a small team of full-stack engineers</p>
+          </section>
+          
+          <section>
+            <img width="1000px" src="./images/fandom-maps-creator.png">
+          </section>
+
+          <section>
+            <div style="display:flex;gap:2rem;width:950px;align-content:space-between;justify-content:center;margin:0 auto;">
+              <div style="flex:1;text-align: left;">
+                <p><em>Pros</em></p>
+                <ul>
+                  <li>We were able to switch after some time</li>
+                  <li>Locally defined state for few components</li>
+                  <li>Extending code feels more robust</li>
+                </ul>
+              </div>
+              <div style="flex:1;text-align: left;">
+                <p><em>Cons</em></p>
+                <ul>
+                  <li>Still partially stuck with Redux mindset</li>
+                  <li>It was hard to adjust</li>
+                  <li>TypeScript issues</li>
+                </ul>
+              </div>
+            </div>
+          </section>
+
+          <section>
+            <p>Important thing is</p>
+            <h2>We know what to improve</h2>
+            <p>We'll continue exploring this library</p>
+          </section>
+
+          <section>
+            <p>How to learn more?</p>
+            <ul>
+              <li><a href="https://xstate.js.org/docs/" target="_blank">XState documentation</a></li>
+              <li><a href="https://egghead.io/courses/introduction-to-state-machines-using-xstate" target="_blank">"Introduction to State Machines Using XState"</a> course</li>
+              <li><a href="https://statecharts.dev/" target="_blank">Statecharts</a> formal definition</li>
+            </ul>
+          </section>
+          
+          <!-- Because I want you to learn about XState, I'd feel guilty if I haven't mention the cons -->
+          <section>
+            <p>Things to keep in mind</p>
+            <ul>
+              <li>It's not a solution to every problem</li>
+              <li>It takes time to change a mindset</li>
+              <li>TypeScript support is not ideal 😢</li>
+            </ul>
+          </section>
+        </section>
+
+        <section>
+          <img src="/images/fandom-logo.png" width="100" />
+          <p>Join Fandom!</p>
+          <p><a href="https://fandom.com/careers" target="_blank">We're looking for talented engineers</a></p>
+          <p>Visit our virtual booth</p>
+          <p>Contact <a href="https://www.linkedin.com/in/ewanowakowska/" target="_blank">Ewa Nowakowska</a> on LinkedIn</p>
+        </section>
+
+        <section>
+          <h1>🙋‍♀️ Questions?</h1>
+        </section>
+      </div>
+    </div>
+
+    <script src="dist/reveal.js"></script>
+    <script src="plugin/notes/notes.js"></script>
+    <script src="plugin/markdown/markdown.js"></script>
+    <script src="plugin/highlight/highlight.js"></script>
+    <script src="plugin/math/math.js"></script>
+    <script>
+      // More info about initialization & config:
+      // - https://revealjs.com/initialization/
+      // - https://revealjs.com/config/
+      Reveal.initialize({
+        hash: true,
+        showNotes: false,
+        width: 1280,
+        height: 760,
+
+        // slideNumber: 'h.v',
+
+        // Learn about plugins: https://revealjs.com/plugins/
+        plugins: [
+          RevealMarkdown,
+          RevealHighlight,
+          RevealNotes,
+          RevealMath.KaTeX,
+        ],
+      });
+    </script>
+  </body>
+</html>
